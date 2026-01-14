@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Todo List</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body class="app-dark">
+    <!-- Centered dark-neon green panel on black background -->
+    <div class="todo-panel">
+      <!-- Panel header -->
+      <header class="panel-header">
+        <h1 class="panel-title">Todo List</h1>
+        <p class="panel-subtitle">
+          A daily usage based App.&nbsp; Hello, {{ session.username }}
+        </p>
+
+        <!-- Logout button, right-aligned via inline style (keeps layout intact) -->
+        <div style="text-align: right; margin-top: 8px">
+          <a class="btn ghost" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+
+        <hr class="panel-divider" />
+      </header>
+
+      <!-- Add Task Form -->
+      <form
+        class="add-task"
+        action="{{ url_for('create_task', page=page) }}"
+        method="POST"
+      >
+        <input
+          type="text"
+          name="title"
+          placeholder="New Todo..."
+          maxlength="255"
+          required
+          aria-label="New todo title"
+        />
+        <button type="submit" class="btn-add">ADD TODO</button>
+      </form>
+
+      <!-- Task List -->
+      <ul class="task-list">
+        {% for task in tasks %}
+        <li
+          data-task-id="{{ task.id }}"
+          class="task-item {% if task.completed %}completed{% endif %}"
+        >
+          <label class="task-left">
+            <input
+              type="checkbox"
+              class="toggle"
+              {%
+              if
+              task.completed
+              %}checked{%
+              endif
+              %}
+              aria-label="Toggle completed for {{ task.title }}"
+            />
+            <span class="task-title">{{ task.title }}</span>
+          </label>
+
+          <!-- Delete Task -->
+          <form
+            class="task-right"
+            action="{{ url_for('delete_task', task_id=task.id, page=page) }}"
+            method="POST"
+          >
+            <button
+              class="icon-btn"
+              type="submit"
+              title="Delete"
+              aria-label="Delete {{ task.title }}"
+            >
+              🗑️
+            </button>
+          </form>
+        </li>
+        {% endfor %}
+      </ul>
+
+      <!-- Pagination -->
+      <nav class="pagination" aria-label="Pagination">
+        {% if page > 1 %}
+        <a class="btn ghost" href="{{ url_for('index', page=page-1) }}"
+          >← Prev</a
+        >
+        {% else %}
+        <span class="btn ghost disabled">← Prev</span>
+        {% endif %}
+
+        <span class="page-info">Page {{ page }} of {{ total_pages }}</span>
+
+        {% if page < total_pages %}
+        <a class="btn ghost" href="{{ url_for('index', page=page+1) }}"
+          >Next →</a
+        >
+        {% else %}
+        <span class="btn ghost disabled">Next →</span>
+        {% endif %}
+      </nav>
+    </div>
+
+    <script>
+      // Toggle completion via fetch + update UI without reload
+      document.querySelectorAll(".task-item .toggle").forEach((cb) => {
+        cb.addEventListener("change", async (e) => {
+          const li = e.target.closest(".task-item");
+          const id = li.dataset.taskId;
+
+          try {
+            const res = await fetch(`/tasks/${id}/toggle`, { method: "POST" });
+            if (!res.ok) throw new Error("Failed to toggle");
+            const data = await res.json();
+
+            if (data.completed) {
+              li.classList.add("completed");
+            } else {
+              li.classList.remove("completed");
+            }
+          } catch (err) {
+            alert("Error toggling task. Please try again.");
+            // Revert checkbox state if server failed
+            e.target.checked = !e.target.checked;
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Login</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body class="app-dark">
+    <div class="todo-panel">
+      <header class="panel-header">
+        <h1 class="panel-title">lets check your daily routine</h1>
+        <p class="panel-subtitle">Please sign in to continue</p>
+        <hr class="panel-divider" />
+      </header>
+
+      {% if error %}
+      <div class="alert-error" role="alert">{{ error }}</div>
+      {% endif %}
+
+      <form
+        class="add-task"
+        action="{{ url_for('login_post') }}"
+        method="POST"
+        autocomplete="off"
+      >
+        <input
+          type="text"
+          name="username"
+          placeholder="Username"
+          required
+          aria-label="Username"
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          required
+          aria-label="Password"
+        />
+        <button type="submit" class="btn-add">LOGIN</button>
+      </form>
+
+      <div class="login-note" style="text-align: center; margin-top: 10px">
+        <small>
+          Don’t have an account?
+          <a class="btn ghost" href="{{ url_for('signup') }}">SIGN UP</a>
+        </small>
+      </div>
+
+      <div class="login-note">
+        <small
+          >Tip: default user is <b>manojit</b> / password <b>test123</b> (you
+          can change this).</small
+        >
+      </div>
+    </div>
+  </body>
+</html>
+``

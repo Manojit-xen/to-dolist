@@ -1,0 +1,61 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Signup</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body class="app-dark">
+
+  <div class="todo-panel">
+    <header class="panel-header">
+      <h1 class="panel-title">Create your account</h1>
+      <p class="panel-subtitle">Sign up to start managing your daily routine</p>
+      <hr class="panel-divider">
+    </header>
+
+    {% if error %}
+      <div class="alert-error" role="alert">{{ error }}</div>
+    {% endif %}
+
+    <form class="add-task" action="{{ url_for('signup_post') }}" method="POST" autocomplete="off">
+      <input
+        type="text"
+        name="username"
+        placeholder="Username"
+        required
+        aria-label="Username"
+        maxlength="64"
+        value="{{ username or '' }}"
+      >
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        required
+        aria-label="Password"
+        minlength="6"
+      >
+      <input
+        type="password"
+        name="confirm"
+        placeholder="Confirm Password"
+        required
+        aria-label="Confirm Password"
+        minlength="6"
+      >
+      <button type="submit" class="btn-add">SIGN UP</button>
+    </form>
+
+    <div class="login-note" style="text-align:center; margin-top:10px;">
+      <small>
+        Already have an account?
+        <a class="btn ghost" href="{{ url_for('login') }}">LOGIN</a>
+      </small>
+    </div>
+  </div>
+
+</body>
+</html>

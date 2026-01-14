@@ -1,0 +1,6 @@
+
+Flask
+gunicorn
+mysql-connector-python
+werkzeug
+python-dotenv   # optional; only if you plan to use it
